@@ -1,112 +1,89 @@
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class GrabHtml {
 
-    private static URL baseUrl;
+    private static String url = "https://www.euro-jackpot.net/en/results-archive-";
+    private static String year;
 
-    static {
-        try {
-            baseUrl = new URL("https://www.euro-jackpot.net/en/results-archive-2017");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static String content = null;
-
-    public List<String> results;
-
-    public static String grabHtmlCodeByYear(String year) {
-        URLConnection connection = null;
-        try {
-            connection = new URL(baseUrl + year).openConnection();
-            Scanner scanner = new Scanner(connection.getInputStream());
-            scanner.useDelimiter("\\Z");
-            content = scanner.next();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        System.out.println(content);
-        return content;
-    }
-
-    public static String parseHtml(String year) throws IOException, SAXException, ParserConfigurationException {
+    private static String htmlString(String year) throws IOException {
+        GrabHtml.year = year;
         StringBuilder stringBuilder = new StringBuilder();
         String res = "";
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(baseUrl.openStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(new URL((url + year)).openStream()));
 
         String inputLine;
         while ((inputLine = in.readLine()) != null) {
             stringBuilder.append(inputLine);
         }
+
         in.close();
-        System.out.println("!---------------------------------------!");
-        System.out.println(stringBuilder);
-        return String.valueOf(stringBuilder).replace("<!DOCTYPE html>", "");
+        int start = String.valueOf(stringBuilder).indexOf("<tbody>");
+        int end = String.valueOf(stringBuilder).indexOf("</tbody>");
+        String result = String.valueOf(stringBuilder).substring(start, end + 8).replaceAll("\\s{2,}", "");
+
+        BufferedWriter bwr = new BufferedWriter(new FileWriter(new File(year + ".xml")));
+        bwr.write(result);
+        bwr.flush();
+        bwr.close();
+        return result;
     }
 
-//    private static Document convertStringToDocument(String xmlStr) {
-//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//        DocumentBuilder builder;
-//        Document document = null;
-//        try {
-//            builder = factory.newDocumentBuilder();
-//            document = builder.parse(new InputSource(new StringReader(xmlStr.replaceAll("<!DOCTYPE html>", ""))));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return document;
-//    }
-
-
-
-        private static void takeNumbers(String year) throws ParserConfigurationException, SAXException, IOException {
-        String toParse = parseHtml(year);
-        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        InputSource is = new InputSource();
-        is.setCharacterStream(new StringReader(toParse));
-
-        Document doc = db.parse(is);
-        System.out.println(doc);
-//        System.out.println(doc.getAttributes().getNamedItem("balls small").getChildNodes().item(1));
-
-
-
-//        BufferedInputStream is = new BufferedInputStream(grabHtmlCodeByYear(year));
-//
-//        File fXmlFile = new File();
-//        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-//        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-//        Document doc = dBuilder.parse(fXmlFile);
-//
-//        NodeList nodeList = doc.getElementsByTagName(("small balls"));
-//        for (int i = 0; i < nodeList.getLength(); i++) {
-//            System.out.println(nodeList.item(i).getChildNodes());
-//        }
-
-   //     System.out.println(doc.getElementsByTagName("balls small"));
+    public static void main(String[] args) throws IOException {
+        getNumbers(htmlString("2018"));
+        getNumbers(htmlString("2017"));
+        getNumbers(htmlString("2016"));
+        getNumbers(htmlString("2015"));
+        getNumbers(htmlString("2014"));
+        getNumbers(htmlString("2013"));
+        getNumbers(htmlString("2012"));
 
     }
 
-    public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
-//        parseHtml("2017");
-        takeNumbers("2017");
+    public static void getNumbers(String xmlRecords) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(xmlRecords));
+
+            Document doc = db.parse(is);
+            int s = doc.getElementsByTagName("ul").getLength();
+            XPathFactory xPathfactory = XPathFactory.newInstance();
+            XPath xpath = xPathfactory.newXPath();
+            List<String> regular2017 = new ArrayList<>();
+            List<String> euro2017 = new ArrayList<>();
+
+            System.out.println("\n" + year + " regular numbers are: ");
+            for (int i = 1; i <= s; i++) {
+                for (int j = 1; j <= 5; j++) {
+                    XPathExpression expr = xpath.compile("((//ul)[" + String.valueOf(i) + "]/li[@class='ball']/span)[" + j + "]");
+                    regular2017.add(expr.evaluate(doc));
+                }
+            }
+            System.out.println(regular2017);
+
+            System.out.println("\n" + year + " euro numbers are: ");
+            for (int i = 1; i <= s; i++) {
+                for (int j = 1; j <= 2; j++) {
+                    XPathExpression expr = xpath.compile("((//ul)[" + String.valueOf(i) + "]/li[@class='euro']/span)[" + j + "]");
+                    euro2017.add(expr.evaluate(doc));
+                }
+            }
+            System.out.println(euro2017);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
-
-
 }
