@@ -1,5 +1,6 @@
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import sun.tracing.PrintStreamProviderFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,19 +15,6 @@ public class GrabHtml {
 
     private static String url = "https://www.euro-jackpot.net/en/results-archive-";
     private static String year;
-
-    private static final char DEFAULT_SEPARATOR = ',';
-
-    static String csvFile = "test.csv";
-    static FileWriter writer;
-
-    static {
-        try {
-            writer = new FileWriter(csvFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void main(String[] args) throws IOException {
         getNumbers(htmlString("2018"));
@@ -64,7 +52,8 @@ public class GrabHtml {
         return result;
     }
 
-    public static void getNumbers(String xmlString) {
+    public static List<List<String>> getNumbers(String xmlString) {
+        List<List<String>> list = new ArrayList<>();
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -76,28 +65,30 @@ public class GrabHtml {
 
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
-
+            List<String> lst = null;
             System.out.println("\n" + year + " numbers are: ");
             for (int i = 1; i <= weeks; i++) {
+                lst = new ArrayList<>();
                 for (int j = 1; j <= 5; j++) {
-
-
                     XPathExpression expr = xpath.compile("((//ul)[" + String.valueOf(i) + "]/li[@class='ball']/span)[" + j + "]");
-
-                    writer.append(expr.evaluate(doc));
-                    System.out.print(expr.evaluate(doc) + " ");
+                    lst.add(expr.evaluate(doc));
                 }
+
                 for (int j = 1; j <= 2; j++) {
                     XPathExpression expr = xpath.compile("((//ul)[" + String.valueOf(i) + "]/li[@class='euro']/span)[" + j + "]");
-                    writer.append(expr.evaluate(doc));
-                    System.out.print(expr.evaluate(doc) + " ");
+                    lst.add(expr.evaluate(doc));
                 }
-                System.out.print("\n");
+                list.add(lst);
 
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        for (List l : list) {
+            System.out.println(l);
+
+        }
+        return list;
     }
 }
