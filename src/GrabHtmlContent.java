@@ -1,6 +1,5 @@
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import sun.tracing.PrintStreamProviderFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -11,7 +10,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
-public class GrabHtml {
+public class GrabHtmlContent {
 
     private static String url = "https://www.euro-jackpot.net/en/results-archive-";
     private static String year;
@@ -28,7 +27,7 @@ public class GrabHtml {
     }
 
     private static String htmlString(String year) throws IOException {
-        GrabHtml.year = year;
+        GrabHtmlContent.year = year;
         StringBuilder stringBuilder = new StringBuilder();
         String res = "";
         BufferedReader in = new BufferedReader(new InputStreamReader(new URL((url + year)).openStream()));
