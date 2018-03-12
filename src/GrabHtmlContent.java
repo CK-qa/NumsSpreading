@@ -13,7 +13,7 @@ import java.util.*;
 public class GrabHtmlContent {
 
     private static String url = "https://www.euro-jackpot.net/en/results-archive-";
-    private static String year;
+    static String year;
 
     public static void main(String[] args) throws IOException {
         getNumbers(htmlString("2018"));
@@ -23,10 +23,11 @@ public class GrabHtmlContent {
 //        getNumbers(htmlString("2014"));
 //        getNumbers(htmlString("2013"));
 //        getNumbers(htmlString("2012"));
-
     }
 
-    private static String htmlString(String year) throws IOException {
+
+
+    public static String htmlString(String year) throws IOException {
         GrabHtmlContent.year = year;
         StringBuilder stringBuilder = new StringBuilder();
         String res = "";
