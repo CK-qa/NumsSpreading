@@ -16,7 +16,8 @@ public class GrabHtmlContent {
     static String year;
 
     public static void main(String[] args) throws IOException {
-        getNumbers(htmlString("2018"));
+        GrabHtmlContent grabHtmlContent = new GrabHtmlContent();
+        grabHtmlContent.getNumbers(grabHtmlContent.htmlString("2018"));
 //        getNumbers(htmlString("2017"));
 //        getNumbers(htmlString("2016"));
 //        getNumbers(htmlString("2015"));
@@ -27,7 +28,7 @@ public class GrabHtmlContent {
 
 
 
-    public static String htmlString(String year) throws IOException {
+    public String htmlString(String year) throws IOException {
         GrabHtmlContent.year = year;
         StringBuilder stringBuilder = new StringBuilder();
         String res = "";
@@ -52,7 +53,7 @@ public class GrabHtmlContent {
         return result;
     }
 
-    public static List<List<String>> getNumbers(String xmlString) {
+    public List<List<String>> getNumbers(String xmlString) {
         List<List<String>> list = new ArrayList<>();
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
