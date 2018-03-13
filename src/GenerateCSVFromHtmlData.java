@@ -14,7 +14,7 @@ public class GenerateCSVFromHtmlData {
         generateCSVFromHtmlData.writeCsvFile("fileAgrrr");
     }
 
-    public void writeCsvFile(String fileName) throws IOException {
+    private void writeCsvFile(String fileName) throws IOException {
         //Ticket ticket = new Ticket();
         FileWriter fileWriter = null;
         List<Ticket> tickets = new ArrayList();
@@ -33,21 +33,21 @@ public class GenerateCSVFromHtmlData {
             for (Ticket t : tickets) {
 
                 fileWriter.append(String.valueOf(t.getYear()));
-                fileWriter.append(COMMA_DELIMITER);
+                appendComma(fileWriter);
 //                fileWriter.append(t.getWeek());
-//                fileWriter.append(COMMA_DELIMITER);
+//                appendComma(fileWriter);
                 fileWriter.append(t.getRegularNum1());
-                fileWriter.append(COMMA_DELIMITER);
+                appendComma(fileWriter);
                 fileWriter.append(t.getRegularNum2());
-                fileWriter.append(COMMA_DELIMITER);
+                appendComma(fileWriter);
                 fileWriter.append(t.getRegularNum3());
-                fileWriter.append(COMMA_DELIMITER);
+                appendComma(fileWriter);
                 fileWriter.append(t.getRegularNum4());
-                fileWriter.append(COMMA_DELIMITER);
+                appendComma(fileWriter);
                 fileWriter.append(t.getRegularNum5());
-                fileWriter.append(COMMA_DELIMITER);
+                appendComma(fileWriter);
                 fileWriter.append(t.getEuroNum1());
-                fileWriter.append(COMMA_DELIMITER);
+                appendComma(fileWriter);
                 fileWriter.append(t.getEuroNum2());
                 fileWriter.append(NEW_LINE_SEPARATOR);
             }
@@ -57,7 +57,6 @@ public class GenerateCSVFromHtmlData {
             System.out.println("Error in CsvFileWriter !!!");
             e.printStackTrace();
         } finally {
-
             try {
                 fileWriter.flush();
                 fileWriter.close();
@@ -67,5 +66,9 @@ public class GenerateCSVFromHtmlData {
             }
 
         }
+    }
+
+    private void appendComma(FileWriter fileWriter) throws IOException {
+        fileWriter.append(COMMA_DELIMITER);
     }
 }

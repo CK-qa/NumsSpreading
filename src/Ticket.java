@@ -18,7 +18,6 @@ public class Ticket {
     private int size = GrabHtmlContent.getNumbers(GrabHtmlContent.htmlString(year)).size();
 
 
-
     public Ticket(GenerateCSVFromHtmlData generateCSVFromHtmlData) throws IOException {
         for (int i = 0; i < size; i++) {
             this.year = GrabHtmlContent.year;
