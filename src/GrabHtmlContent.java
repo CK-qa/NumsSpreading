@@ -27,7 +27,6 @@ public class GrabHtmlContent {
     }
 
 
-
     public static String htmlString(String year) throws IOException {
         GrabHtmlContent.year = year;
         StringBuilder stringBuilder = new StringBuilder();
@@ -71,7 +70,7 @@ public class GrabHtmlContent {
             for (int i = 1; i <= weeks; i++) {
                 lst = new ArrayList<>();
                 for (int j = 1; j <= 5; j++) {
-                    XPathExpression expr = xpath.compile("((//ul)[" + String.valueOf(i) + "]/li[@class='ball']/span)[" + j + "]");
+                    XPathExpression expr = xpath.compile("((//ul)[" + String.valueOf(i) + "]/li[@class='@ball']/span)[" + j + "]");
                     lst.add(expr.evaluate(doc));
                 }
 
@@ -88,7 +87,6 @@ public class GrabHtmlContent {
         }
         for (List l : list) {
             System.out.println(l);
-
         }
         return list;
     }

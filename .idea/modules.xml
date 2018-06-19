@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/NumsSpreading.iml" filepath="$PROJECT_DIR$/.idea/NumsSpreading.iml" />
       <module fileurl="file://$PROJECT_DIR$/NumsSpreading.iml" filepath="$PROJECT_DIR$/NumsSpreading.iml" />
     </modules>
   </component>
